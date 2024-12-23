@@ -10,62 +10,93 @@ const Clock = () => {
   }, []);
 
   const formatNumber = (num) => num.toString().padStart(2, "0");
-  const hours = time.getHours();
+  const hours = formatNumber(time.getHours());
   const minutes = formatNumber(time.getMinutes());
-  const ampm = hours >= 12 ? "PM" : "AM";
-  const displayHours = formatNumber(hours % 12 || 12);
+  const seconds = formatNumber(time.getSeconds());
 
   return (
     <div
       className={`min-h-screen w-full relative overflow-hidden transition-all duration-700
         ${
           isDarkTheme
-            ? "bg-gradient-to-br from-purple-700 via-fuchsia-500 to-pink-500"
-            : "bg-gradient-to-br from-blue-400 via-purple-400 to-pink-300"
+            ? "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-purple-900 to-violet-950"
+            : "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-100 via-purple-200 to-blue-300"
         }`}
+      onDoubleClick={() => setIsDarkTheme(!isDarkTheme)}
     >
-      {/* Glow effect background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.2)_0%,_transparent_50%)]" />
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(30)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute rounded-full blur-2xl opacity-20 animate-float-slow
+              ${isDarkTheme ? "bg-purple-500" : "bg-pink-300"}`}
+            style={{
+              width: Math.random() * 300 + 100 + "px",
+              height: Math.random() * 300 + 100 + "px",
+              left: Math.random() * 100 + "%",
+              top: Math.random() * 100 + "%",
+              animationDelay: `${Math.random() * 8}s`,
+              animationDuration: `${20 + Math.random() * 20}s`,
+              transform: `rotate(${Math.random() * 360}deg)`,
+            }}
+          />
+        ))}
+      </div>
 
-      {/* Main content */}
-      <div className="relative z-10 h-screen flex flex-col items-center justify-center">
-        {/* Clock display */}
-        <div className="text-center relative">
-          <div className="text-8xl font-bold text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
-            {`${displayHours}:${minutes}`}
-            <span className="text-4xl ml-2">{ampm}</span>
-          </div>
+      {/* Clock display */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        {/* Inner rotating ring */}
+        <div className="relative w-96 h-96">
+          <div
+            className={`absolute inset-0 rounded-full border-2 animate-spin-slow
+            ${isDarkTheme ? "border-purple-500/20" : "border-pink-300/30"}`}
+          />
+          <div
+            className={`absolute inset-0 rounded-full border-2 animate-spin-reverse
+            ${isDarkTheme ? "border-blue-500/20" : "border-blue-300/30"}`}
+          />
 
-          {/* Theme toggle button */}
-          <button
-            onClick={() => setIsDarkTheme(!isDarkTheme)}
-            className="mt-8 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full 
-                     text-white/80 text-sm uppercase tracking-wider hover:bg-white/20 
-                     transition-all duration-300 border border-white/20"
-          >
-            {isDarkTheme ? "Light Mode" : "Dark Mode"}
-          </button>
-        </div>
-
-        {/* Floating glow orbs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(3)].map((_, i) => (
+          {/* Time display */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div
-              key={i}
-              className="absolute rounded-full blur-3xl opacity-30 animate-float-slow"
-              style={{
-                background: isDarkTheme
-                  ? "radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,192,203,0.3) 50%, transparent 70%)"
-                  : "radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(147,51,234,0.3) 50%, transparent 70%)",
-                width: "40vw",
-                height: "40vw",
-                left: `${i * 30 + 20}%`,
-                top: `${i * 20 + 30}%`,
-                animationDelay: `${i * 2}s`,
-              }}
-            />
-          ))}
+              className={`text-8xl font-light tracking-widest mb-4
+              ${isDarkTheme ? "text-white/90" : "text-gray-800/90"}`}
+            >
+              {`${hours}:${minutes}`}
+              <span className="text-4xl ml-4 opacity-50">{seconds}</span>
+            </div>
+
+            <div
+              className={`text-lg tracking-widest uppercase
+              ${isDarkTheme ? "text-purple-300/70" : "text-purple-600/70"}`}
+            >
+              {time.toLocaleDateString(undefined, {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+              })}
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Floating particles */}
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(50)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute w-1 h-1 rounded-full animate-float
+              ${isDarkTheme ? "bg-white/30" : "bg-purple-500/30"}`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${Math.random() * 10 + 10}s`,
+              transform: `scale(${Math.random() * 2 + 0.5})`,
+            }}
+          />
+        ))}
       </div>
     </div>
   );
